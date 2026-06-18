@@ -1,0 +1,43 @@
+package com.hms.User.api;
+
+import com.hms.User.dto.UserDTO;
+import com.hms.User.exception.HmException;
+import com.hms.User.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+@CrossOrigin
+public class UserAPI {
+
+    private final UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userDTO) throws HmException {
+        UserDTO registeredUser = userService.register(userDTO);
+        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserDTO> login(@RequestBody UserDTO loginRequest) throws HmException {
+        UserDTO userDTO = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) throws HmException {
+        UserDTO userDTO = userService.findUserById(id);
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) throws HmException {
+        UserDTO updatedUser = userService.updateUser(id, userDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+}
