@@ -1,7 +1,11 @@
 package com.hms.User.api;
 
+import com.hms.User.dto.LoginDTO;
 import com.hms.User.dto.UserDTO;
 import com.hms.User.exception.HmException;
+import com.hms.User.jwt.CustomUserDetails;
+import com.hms.User.jwt.JwtUtil;
+import com.hms.User.jwt.MyUserDetailsService;
 import com.hms.User.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserAPI {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final MyUserDetailsService myUserDetailsService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userDTO) throws HmException {
@@ -24,9 +30,12 @@ public class UserAPI {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody UserDTO loginRequest) throws HmException {
-        UserDTO userDTO = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-        return ResponseEntity.ok(userDTO);
+    public ResponseEntity<LoginDTO> login(@RequestBody LoginDTO loginRequest) throws HmException {
+        userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+        CustomUserDetails userDetails = (CustomUserDetails) myUserDetailsService.loadUserByUsername(loginRequest.getEmail());
+        loginRequest.setToken(jwtUtil.generateToken(userDetails));
+        loginRequest.setPassword(null);
+        return ResponseEntity.ok(loginRequest);
     }
 
     @GetMapping("/{id}")

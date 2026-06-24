@@ -65,6 +65,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getUser(String email) throws HmException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new HmException(getMessage("user.not.found")));
+        return user.toDTO();
+    }
+
+    @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) throws HmException {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new HmException(getMessage("user.not.found", id)));

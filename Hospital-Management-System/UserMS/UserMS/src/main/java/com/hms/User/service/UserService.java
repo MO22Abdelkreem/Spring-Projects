@@ -8,5 +8,6 @@ public interface UserService {
     UserDTO login(String email, String password) throws HmException;
     UserDTO findUserById(Long id) throws HmException;
     UserDTO getUser(Long id) throws HmException;
+    UserDTO getUser(String email) throws HmException;
     UserDTO updateUser(Long id, UserDTO userDTO) throws HmException;
 }
