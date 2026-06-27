@@ -23,6 +23,11 @@ public class UserAPI {
     private final JwtUtil jwtUtil;
     private final MyUserDetailsService myUserDetailsService;
 
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return new ResponseEntity<>("text", HttpStatus.OK);
+    }
+
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userDTO) throws HmException {
         UserDTO registeredUser = userService.register(userDTO);
