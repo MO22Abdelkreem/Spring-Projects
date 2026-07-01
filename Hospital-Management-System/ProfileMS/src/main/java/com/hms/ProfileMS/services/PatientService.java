@@ -5,7 +5,8 @@ import com.hms.ProfileMS.entity.Patient;
 import com.hms.ProfileMS.exception.HmException;
 
 public interface PatientService {
-    public void addPatient(PatientDTO patientDTO)throws HmException;
+    public Long addPatient(PatientDTO patientDTO)throws HmException;
     public Patient getPatientById(Long id)throws HmException;
+    public void deletePatient(Long id)throws HmException;
 
 }

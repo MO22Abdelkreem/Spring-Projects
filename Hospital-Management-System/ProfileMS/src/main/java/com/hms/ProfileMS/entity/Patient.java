@@ -35,7 +35,7 @@ public class Patient {
     private String address;
 
     @Column(unique = true)
-    private String addharNo;
+    private String aadharNo;
 
     @Enumerated(EnumType.STRING)
     private BloodGroup bloodGroup;
@@ -48,7 +48,7 @@ public class Patient {
                 this.dob,
                 this.phone,
                 this.address,
-                this.addharNo,
+                this.aadharNo,
                 this.bloodGroup
         );
     }
