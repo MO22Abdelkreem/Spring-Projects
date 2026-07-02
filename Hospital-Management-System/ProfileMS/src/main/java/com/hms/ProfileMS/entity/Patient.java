@@ -39,6 +39,8 @@ public class Patient {
 
     @Enumerated(EnumType.STRING)
     private BloodGroup bloodGroup;
+    private String allergies;
+    private String chronicDisease;
 
     public PatientDTO toDTO() {
         return new PatientDTO(
@@ -49,7 +51,9 @@ public class Patient {
                 this.phone,
                 this.address,
                 this.aadharNo,
-                this.bloodGroup
+                this.bloodGroup,
+                this.allergies,
+                this.chronicDisease
         );
     }
 }

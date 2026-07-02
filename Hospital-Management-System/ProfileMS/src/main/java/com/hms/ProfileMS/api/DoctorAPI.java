@@ -26,9 +26,9 @@ public class DoctorAPI {
     }
 
     @PostMapping({"/add", "/create"})
-    public ResponseEntity<String> addPatient(@Valid @RequestBody DoctorDTO doctorDTO) throws HmException {
-        doctorService.addDoctor(doctorDTO);
-        return new ResponseEntity<>("Patient added successfully", HttpStatus.CREATED);
+    public ResponseEntity<Long> addDoctor(@Valid @RequestBody DoctorDTO doctorDTO) throws HmException {
+        Long id = doctorService.addDoctor(doctorDTO);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @GetMapping("/get/{id}")

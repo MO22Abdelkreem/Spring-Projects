@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface DoctorRepository extends CrudRepository<Doctor, Long> {
 
 
-    Optional<Patient> findByEmail(String email);
-    Optional<Patient> findByLicenseNo(String licenseNo);
+    Optional<Doctor> findByEmail(String email);
+    Optional<Doctor> findByLicenseNo(String licenseNo);
 }
 

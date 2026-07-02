@@ -17,10 +17,10 @@ public class DoctorServiceImpl implements DoctorService{
 
     @Override
     public Long addDoctor(DoctorDTO doctorDTO) throws HmException {
-        if (doctorRepository.findByEmail(doctorDTO.getEmail()) != null)
+        if (doctorRepository.findByEmail(doctorDTO.getEmail()).isPresent())
             throw new HmException("DOCTOR_ALREADY_EXISTS");
 
-        if (doctorRepository.findByLicenseNo(doctorDTO.getLicenseNo()) != null)
+        if (doctorDTO.getLicenseNo() != null && doctorRepository.findByLicenseNo(doctorDTO.getLicenseNo()).isPresent())
             throw new HmException("DOCTOR_ALREADY_EXISTS");
 
         return doctorRepository.save(doctorDTO.toEntity()).getId();

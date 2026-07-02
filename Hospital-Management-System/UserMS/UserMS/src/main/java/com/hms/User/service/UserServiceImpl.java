@@ -4,6 +4,7 @@ import com.hms.User.dto.UserDTO;
 import com.hms.User.entity.User;
 import com.hms.User.exception.HmException;
 import com.hms.User.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service("userService")
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private ApiService apiService;
 
     @Override
     public UserDTO register(UserDTO userDTO) throws HmException {
@@ -35,6 +40,16 @@ public class UserServiceImpl implements UserService {
         }
         User user = userDTO.toEntity();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Long profileId;
+        try {
+            profileId = apiService.addProfile(userDTO).block();
+        } catch (org.springframework.web.reactive.function.client.WebClientResponseException exception) {
+            throw new HmException("Profile service error: " + exception.getResponseBodyAsString(), exception);
+        } catch (RuntimeException exception) {
+            throw new HmException("Unable to create profile. Error: " + exception.getMessage(), exception);
+        }
+        userDTO.setProfileId(profileId);
+        user.setProfileId(profileId);
         User savedUser = userRepository.save(user);
         return savedUser.toDTO();
     }

@@ -32,9 +32,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Roles role;
+    private Long profileId;
 
     public UserDTO toDTO() {
-        return new UserDTO(this.id, this.username, this.email, this.password, this.role);
+        return new UserDTO(this.id, this.username, this.email, this.password, this.role, this.profileId);
     }
 
     public static User fromUserDTO(UserDTO dto) {

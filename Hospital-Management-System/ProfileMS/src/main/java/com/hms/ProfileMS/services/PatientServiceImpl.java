@@ -17,11 +17,11 @@ public class PatientServiceImpl implements PatientService{
 
     @Override
     public Long addPatient(PatientDTO patientDTO) throws HmException {
-       if(patientRepository.findByEmail(patientDTO.getEmail()).isPresent())throw
-            new HmException("PATIENT_ALREADY_EXISTS");
-       if(patientRepository.findByAadharNo(patientDTO.getAddharNo()).isPresent())throw
-            new HmException("PATIENT_ALREADY_EXISTS");
-       return patientRepository.save(patientDTO.toEntity()).getId();
+        if (patientRepository.findByEmail(patientDTO.getEmail()).isPresent())
+            throw new HmException("PATIENT_ALREADY_EXISTS");
+        if (patientDTO.getAddharNo() != null && patientRepository.findByAadharNo(patientDTO.getAddharNo()).isPresent())
+            throw new HmException("PATIENT_ALREADY_EXISTS");
+        return patientRepository.save(patientDTO.toEntity()).getId();
     }
 
     @Override

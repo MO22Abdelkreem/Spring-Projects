@@ -3,6 +3,7 @@ package com.hms.User.dto;
 import com.hms.User.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,11 +26,12 @@ public class UserDTO {
             message = "Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
     )
     private String password;
+    @NotNull(message = "Role is mandatory")
     private Roles role;
+    private Long profileId;
 
     public User toEntity() {
-        return new User(this.id, this.username, this.password, this.email, this.role);
+        return new User(this.id, this.username, this.password, this.email, this.role, this.profileId);
     }
 }
-
 
