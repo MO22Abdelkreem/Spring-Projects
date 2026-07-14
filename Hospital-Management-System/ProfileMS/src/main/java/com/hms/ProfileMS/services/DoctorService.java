@@ -9,4 +9,5 @@ public interface DoctorService {
     public DoctorDTO getDoctorById(Long id)throws HmException;
 
     void deleteDoctor(Long id) throws HmException;
+    public DoctorDTO updateDoctor(DoctorDTO doctorDTO)throws HmException;
 }

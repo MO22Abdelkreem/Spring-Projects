@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DoctorServiceImpl implements DoctorService{
+    @Override
+    public DoctorDTO updateDoctor(DoctorDTO doctorDTO) throws HmException {
+        doctorRepository.findById(doctorDTO.getId()).orElseThrow(()-> new HmException("DOCTOR_NOT_FOUND"));
+        return doctorRepository.save(doctorDTO.toEntity()).toDTO();
+    }
 
     private final DoctorRepository doctorRepository;
 

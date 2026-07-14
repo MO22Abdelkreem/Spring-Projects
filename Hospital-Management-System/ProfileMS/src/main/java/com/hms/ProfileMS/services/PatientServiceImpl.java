@@ -37,4 +37,10 @@ public class PatientServiceImpl implements PatientService{
         }
         patientRepository.deleteById(id);
     }
+
+    @Override
+    public PatientDTO updatePatient(PatientDTO patientDTO) throws HmException {
+        patientRepository.findById(patientDTO.getId()).orElseThrow(()-> new HmException("PATIENT_NOT_FOUND"));
+        return patientRepository.save(patientDTO.toEntity()).toDTO();
+    }
 }

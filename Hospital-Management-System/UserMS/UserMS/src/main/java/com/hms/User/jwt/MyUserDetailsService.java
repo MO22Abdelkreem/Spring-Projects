@@ -31,6 +31,7 @@ public class MyUserDetailsService implements UserDetailsService {
             userDetails.setPassword(userDTO.getPassword());
             userDetails.setRole(userDTO.getRole());
             userDetails.setName(userDTO.getUsername());
+            userDetails.setProfileId(userDTO.getProfileId());
             Collection<SimpleGrantedAuthority> authorities = userDTO.getRole() == null
                     ? Collections.emptyList()
                     : Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userDTO.getRole().name()));

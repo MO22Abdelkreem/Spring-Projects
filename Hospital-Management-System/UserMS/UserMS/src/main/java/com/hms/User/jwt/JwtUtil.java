@@ -20,6 +20,7 @@ public class JwtUtil {
                 .claim("id", userDetails.getId())
                 .claim("name", userDetails.getName())
                 .claim("role", userDetails.getRole())
+                .claim("profileId", userDetails.getProfileId())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
                 .signWith(getSigningKey())

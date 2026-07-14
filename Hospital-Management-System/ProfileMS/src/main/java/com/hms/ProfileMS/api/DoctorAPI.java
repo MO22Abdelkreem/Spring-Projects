@@ -41,4 +41,9 @@ public class DoctorAPI {
         doctorService.deleteDoctor(id);
         return new ResponseEntity<>("Doctor deleted successfully", HttpStatus.OK);
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<PatientDTO> updateDoctor(@RequestBody DoctorDTO doctorDTO)throws HmException{
+        return new ResponseEntity<>(doctorService.updateDoctor(doctorDTO), HttpStatus.OK);
+    }
 }
