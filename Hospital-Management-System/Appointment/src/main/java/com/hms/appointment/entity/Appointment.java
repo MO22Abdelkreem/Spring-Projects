@@ -1,5 +1,6 @@
 package com.hms.appointment.entity;
 
+import com.hms.appointment.dto.AppointmentDTO;
 import com.hms.appointment.dto.Status;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -47,4 +48,17 @@ public class Appointment {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+
+    public AppointmentDTO toDTO() {
+        AppointmentDTO dto = new AppointmentDTO();
+        dto.setId(this.id);
+        dto.setPatientId(this.patientId);
+        dto.setDoctorId(this.doctorId);
+        dto.setAppointmentTime(this.appointmentTime);
+        dto.setStatus(this.status);
+        dto.setReason(this.reason);
+        dto.setNotes(this.notes);
+        return dto;
+    }
 }

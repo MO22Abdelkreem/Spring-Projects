@@ -1,9 +1,11 @@
 package com.hms.appointment.dto;
 
+import com.hms.appointment.entity.Appointment;
+
 import java.time.LocalDateTime;
 
 public class AppointmentDTO {
-    
+
     private Long id;
     private Long patientId;
     private Long doctorId;
@@ -34,4 +36,15 @@ public class AppointmentDTO {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+    public Appointment toEntity() {
+        Appointment entity = new Appointment();
+        entity.setId(this.id);
+        entity.setPatientId(this.patientId);
+        entity.setDoctorId(this.doctorId);
+        entity.setAppointmentTime(this.appointmentTime);
+        entity.setStatus(this.status);
+        entity.setReason(this.reason);
+        entity.setNotes(this.notes);
+        return entity;
+    }
 }
