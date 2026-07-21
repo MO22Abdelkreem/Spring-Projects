@@ -14,6 +14,11 @@ public class DoctorServiceImpl implements DoctorService{
         return doctorRepository.save(doctorDTO.toEntity()).toDTO();
     }
 
+    @Override
+    public Boolean doctorExists(Long id) throws HmException {
+        return doctorRepository.existsById(id);
+    }
+
     private final DoctorRepository doctorRepository;
 
     public DoctorServiceImpl(DoctorRepository doctorRepository) {

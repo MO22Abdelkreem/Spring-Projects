@@ -9,5 +9,6 @@ public interface PatientService {
     public Patient getPatientById(Long id)throws HmException;
     public void deletePatient(Long id)throws HmException;
     public PatientDTO updatePatient(PatientDTO patientDTO)throws HmException;
+    public Boolean patientExists(Long id)throws HmException;
 
 }

@@ -10,6 +10,7 @@ import com.hms.ProfileMS.services.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +46,10 @@ public class DoctorAPI {
     @PutMapping("/update")
     public ResponseEntity<DoctorDTO> updateDoctor(@RequestBody DoctorDTO doctorDTO)throws HmException{
         return new ResponseEntity<>(doctorService.updateDoctor(doctorDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/exists/{id}")
+    public ResponseEntity<Boolean> doctorExists(@PathVariable Long id)throws HmException{
+        return new ResponseEntity<>(doctorService.doctorExists(id),HttpStatus.OK);
     }
 }

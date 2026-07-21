@@ -10,4 +10,6 @@ public interface DoctorService {
 
     void deleteDoctor(Long id) throws HmException;
     public DoctorDTO updateDoctor(DoctorDTO doctorDTO)throws HmException;
+
+    public Boolean doctorExists(Long id)throws HmException;
 }
