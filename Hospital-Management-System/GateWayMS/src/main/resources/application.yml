@@ -1,0 +1,34 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: GateWayMS
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-ms
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - Token
+
+            - id: profile-ms
+              uri: http://localhost:9100
+              predicates:
+                - Path=/profile/**
+              filters:
+                - Token
+
+            - id: appointment-ms
+              uri: http://localhost:8085
+              predicates:
+                - Path=/appointment/**
+              filters:
+                - Token
+
+jwt:
+  secret: hospital-management-user-service-jwt-secret-key-256

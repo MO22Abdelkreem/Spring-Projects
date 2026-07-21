@@ -43,13 +43,13 @@ public class UserAPI {
         return ResponseEntity.ok(loginRequest);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) throws HmException {
         UserDTO userDTO = userService.findUserById(id);
         return ResponseEntity.ok(userDTO);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) throws HmException {
         UserDTO updatedUser = userService.updateUser(id, userDTO);
         return ResponseEntity.ok(updatedUser);
