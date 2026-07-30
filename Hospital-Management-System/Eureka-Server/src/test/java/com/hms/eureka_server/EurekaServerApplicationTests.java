@@ -1,14 +1,13 @@
-package com.hms.User;
+package com.hms.eureka_server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UserMsApplicationTests {
+class EurekaServerApplicationTests {
 
 	@Test
 	void contextLoads() {
 	}
 
 }
-

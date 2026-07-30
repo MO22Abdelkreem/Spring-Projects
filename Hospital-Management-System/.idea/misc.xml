@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/HMS/pom.xml" />
+        <option value="$PROJECT_DIR$/UserMS/UserMS/pom.xml" />
+        <option value="$PROJECT_DIR$/GateWayMS/pom.xml" />
+        <option value="$PROJECT_DIR$/ProfileMS/pom.xml" />
+        <option value="$PROJECT_DIR$/Appointment/pom.xml" />
+        <option value="$PROJECT_DIR$/Eureka-Server/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="ms-21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

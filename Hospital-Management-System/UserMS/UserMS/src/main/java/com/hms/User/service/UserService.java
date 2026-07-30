@@ -1,13 +1,15 @@
 package com.hms.User.service;
 
+import com.hms.User.dto.RegisterRequestDTO;
 import com.hms.User.dto.UserDTO;
+import com.hms.User.dto.UserResponseDTO;
 import com.hms.User.exception.HmException;
 
 public interface UserService {
-    UserDTO register(UserDTO userDTO) throws HmException;
-    UserDTO login(String email, String password) throws HmException;
-    UserDTO findUserById(Long id) throws HmException;
-    UserDTO getUser(Long id) throws HmException;
+    UserResponseDTO register(RegisterRequestDTO registerRequestDTO) throws HmException;
+    UserResponseDTO login(String email, String password) throws HmException;
+    UserResponseDTO findUserById(Long id) throws HmException;
+    UserResponseDTO getUser(Long id) throws HmException;
     UserDTO getUser(String email) throws HmException;
-    UserDTO updateUser(Long id, UserDTO userDTO) throws HmException;
+    UserResponseDTO updateUser(Long id, RegisterRequestDTO registerRequestDTO) throws HmException;
 }

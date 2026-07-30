@@ -1,6 +1,8 @@
 package com.hms.gateway.filter;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -51,8 +53,9 @@ public class TokenGatewayFilterFactory
             String token = authorizationHeader.substring(7);
             try {
                 Jwts.parser()
-                        .setSigningKey(SECRET)
-                        .parseClaimsJws(token);
+                        .verifyWith(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
+                        .build()
+                        .parseSignedClaims(token);
 
                 return chain.filter(exchangeWithSecretHeader(exchange));
             } catch (Exception e) {

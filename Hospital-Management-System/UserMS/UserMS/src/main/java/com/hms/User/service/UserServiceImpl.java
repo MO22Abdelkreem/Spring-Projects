@@ -1,6 +1,8 @@
 package com.hms.User.service;
 
+import com.hms.User.dto.RegisterRequestDTO;
 import com.hms.User.dto.UserDTO;
+import com.hms.User.dto.UserResponseDTO;
 import com.hms.User.entity.User;
 import com.hms.User.exception.HmException;
 import com.hms.User.repository.UserRepository;
@@ -30,52 +32,50 @@ public class UserServiceImpl implements UserService {
     private ApiService apiService;
 
     @Override
-    public UserDTO register(UserDTO userDTO) throws HmException {
-        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
+    public UserResponseDTO register(RegisterRequestDTO registerRequestDTO) throws HmException {
+        if (userRepository.findByUsername(registerRequestDTO.getUsername()).isPresent()) {
             throw new HmException(getMessage("user.username.exists"));
         }
-        Optional<User> optionalUser = userRepository.findByEmail(userDTO.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(registerRequestDTO.getEmail());
         if (optionalUser.isPresent()) {
             throw new HmException(getMessage("user.email.exists"));
         }
-        User user = userDTO.toEntity();
+        User user = registerRequestDTO.toEntity();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Long profileId;
         try {
-            profileId = apiService.addProfile(userDTO).block();
+            profileId = apiService.addProfile(registerRequestDTO).block();
         } catch (org.springframework.web.reactive.function.client.WebClientResponseException exception) {
             throw new HmException("Profile service error: " + exception.getResponseBodyAsString(), exception);
         } catch (RuntimeException exception) {
             throw new HmException("Unable to create profile. Error: " + exception.getMessage(), exception);
         }
-        userDTO.setProfileId(profileId);
         user.setProfileId(profileId);
         User savedUser = userRepository.save(user);
-        return savedUser.toDTO();
+        return savedUser.toResponseDTO();
     }
 
 
     @Override
-    public UserDTO login(String email, String password) throws HmException {
+    public UserResponseDTO login(String email, String password) throws HmException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new HmException(getMessage("user.login.invalid")));
         
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new HmException(getMessage("user.login.invalid"));
         }
-        user.setPassword(null);
-        return user.toDTO();
+        return user.toResponseDTO();
     }
 
     @Override
-    public UserDTO findUserById(Long id) throws HmException {
+    public UserResponseDTO findUserById(Long id) throws HmException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new HmException(getMessage("user.not.found", id)));
-        return user.toDTO();
+        return user.toResponseDTO();
     }
 
     @Override
-    public UserDTO getUser(Long id) throws HmException {
+    public UserResponseDTO getUser(Long id) throws HmException {
         return findUserById(id);
     }
 
@@ -87,17 +87,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(Long id, UserDTO userDTO) throws HmException {
+    public UserResponseDTO updateUser(Long id, RegisterRequestDTO registerRequestDTO) throws HmException {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new HmException(getMessage("user.not.found", id)));
         
-        existingUser.setUsername(userDTO.getUsername());
-        existingUser.setEmail(userDTO.getEmail());
-        existingUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        existingUser.setRole(userDTO.getRole());
+        existingUser.setUsername(registerRequestDTO.getUsername());
+        existingUser.setEmail(registerRequestDTO.getEmail());
+        existingUser.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
+        existingUser.setRole(registerRequestDTO.getRole());
 
         User updatedUser = userRepository.save(existingUser);
-        return updatedUser.toDTO();
+        return updatedUser.toResponseDTO();
     }
 
     private String getMessage(String key, Object... args) {

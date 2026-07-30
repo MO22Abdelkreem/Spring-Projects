@@ -1,7 +1,8 @@
 package com.hms.User.api;
 
 import com.hms.User.dto.LoginDTO;
-import com.hms.User.dto.UserDTO;
+import com.hms.User.dto.RegisterRequestDTO;
+import com.hms.User.dto.UserResponseDTO;
 import com.hms.User.exception.HmException;
 import com.hms.User.jwt.CustomUserDetails;
 import com.hms.User.jwt.JwtUtil;
@@ -29,8 +30,8 @@ public class UserAPI {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userDTO) throws HmException {
-        UserDTO registeredUser = userService.register(userDTO);
+    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) throws HmException {
+        UserResponseDTO registeredUser = userService.register(registerRequestDTO);
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
@@ -44,14 +45,14 @@ public class UserAPI {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) throws HmException {
-        UserDTO userDTO = userService.findUserById(id);
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id) throws HmException {
+        UserResponseDTO userDTO = userService.findUserById(id);
         return ResponseEntity.ok(userDTO);
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) throws HmException {
-        UserDTO updatedUser = userService.updateUser(id, userDTO);
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody RegisterRequestDTO registerRequestDTO) throws HmException {
+        UserResponseDTO updatedUser = userService.updateUser(id, registerRequestDTO);
         return ResponseEntity.ok(updatedUser);
     }
 }

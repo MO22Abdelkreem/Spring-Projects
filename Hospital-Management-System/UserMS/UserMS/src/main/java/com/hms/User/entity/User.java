@@ -1,7 +1,9 @@
 package com.hms.User.entity;
 
 import com.hms.User.dto.Roles;
+import com.hms.User.dto.RegisterRequestDTO;
 import com.hms.User.dto.UserDTO;
+import com.hms.User.dto.UserResponseDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,28 @@ public class User {
     private Long profileId;
 
     public UserDTO toDTO() {
-        return new UserDTO(this.id, this.username, this.email, this.password, this.role, this.profileId);
+        UserDTO dto = new UserDTO();
+
+        dto.setId(this.id);
+        dto.setUsername(this.username);
+        dto.setEmail(this.email);
+        dto.setPassword(this.password);
+        dto.setRole(this.role);
+        dto.setProfileId(this.profileId);
+
+        return dto;
+    }
+
+    public UserResponseDTO toResponseDTO() {
+        UserResponseDTO dto = new UserResponseDTO();
+
+        dto.setId(this.id);
+        dto.setUsername(this.username);
+        dto.setEmail(this.email);
+        dto.setRole(this.role);
+        dto.setProfileId(this.profileId);
+
+        return dto;
     }
 
     public static User fromUserDTO(UserDTO dto) {
@@ -48,8 +70,20 @@ public class User {
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
         user.setRole(dto.getRole());
+        user.setProfileId(dto.getProfileId());
+        return user;
+    }
+
+    public static User fromRegisterRequest(RegisterRequestDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        user.setRole(dto.getRole());
         return user;
     }
 }
-
 

@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 public class WebClientConfig {
     @Bean
     public WebClient.Builder getWebClientBuilder(){
-        return WebClient.builder().defaultHeader(("X-Secret"), "SECRET").filter(logRequest());
+        return WebClient.builder().defaultHeader("X-Secret-Key", "SECRET").filter(logRequest());
     }
 
     private ExchangeFilterFunction logRequest(){

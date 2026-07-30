@@ -1,7 +1,7 @@
 package com.hms.User.service;
 
+import com.hms.User.dto.RegisterRequestDTO;
 import com.hms.User.dto.Roles;
-import com.hms.User.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,7 +13,7 @@ public class ApiService {
     @Autowired
     private WebClient.Builder webClient;
 
-    public Mono<Long> addProfile(UserDTO userDTO) {
+    public Mono<Long> addProfile(RegisterRequestDTO userDTO) {
 
         if (Roles.DOCTOR.equals(userDTO.getRole())) {
             return webClient.build()
