@@ -10,25 +10,32 @@ spring:
         webflux:
           routes:
             - id: user-ms
-              uri: http://localhost:8080
+              uri: lb://UserMS
               predicates:
                 - Path=/api/users/**
               filters:
                 - Token
 
             - id: profile-ms
-              uri: http://localhost:9100
+              uri: lb://ProfileMS
               predicates:
                 - Path=/profile/**
               filters:
                 - Token
 
             - id: appointment-ms
-              uri: http://localhost:8085
+              uri: lb://Appointment
               predicates:
                 - Path=/appointment/**
               filters:
                 - Token
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+  instance:
+    prefer-ip-address: true
 
 jwt:
   secret: hospital-management-user-service-jwt-secret-key-256
