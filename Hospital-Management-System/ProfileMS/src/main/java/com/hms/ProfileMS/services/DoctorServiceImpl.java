@@ -50,4 +50,19 @@ public class DoctorServiceImpl implements DoctorService{
         }
         doctorRepository.deleteById(id);
     }
+
+    @Override
+    public java.util.List<DoctorDTO> getAllDoctors() {
+        return doctorRepository.findAll().stream().map(Doctor::toDTO).toList();
+    }
+
+    @Override
+    public java.util.List<DoctorDTO> getDoctorsByDepartment(String department) {
+        return doctorRepository.findByDepartmentIgnoreCase(department).stream().map(Doctor::toDTO).toList();
+    }
+
+    @Override
+    public java.util.List<DoctorDTO> getDoctorsBySpecialization(String specialization) {
+        return doctorRepository.findBySpecializationIgnoreCase(specialization).stream().map(Doctor::toDTO).toList();
+    }
 }

@@ -7,7 +7,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -37,7 +36,7 @@ public class TokenGatewayFilterFactory
                     .getPath();
 
             if (isPublicEndpoint(path)) {
-                return chain.filter(exchangeWithSecretHeader(exchange));
+                return chain.filter(exchange);
             }
             String authorizationHeader =
                     exchange.getRequest()
@@ -57,7 +56,7 @@ public class TokenGatewayFilterFactory
                         .build()
                         .parseSignedClaims(token);
 
-                return chain.filter(exchangeWithSecretHeader(exchange));
+                return chain.filter(exchange);
             } catch (Exception e) {
                 return unauthorized(
                         exchange,
@@ -72,23 +71,6 @@ public class TokenGatewayFilterFactory
                 ||
                 path.equals("/api/users/register");
 
-    }
-
-    private org.springframework.web.server.ServerWebExchange exchangeWithSecretHeader(
-            org.springframework.web.server.ServerWebExchange exchange
-    ) {
-        ServerHttpRequest request =
-                exchange.getRequest()
-                        .mutate()
-                        .header(
-                                "X-Secret-Key",
-                                "SECRET"
-                        )
-                        .build();
-
-        return exchange.mutate()
-                .request(request)
-                .build();
     }
 
     private Mono<Void> unauthorized(

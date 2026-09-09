@@ -1,6 +1,8 @@
 package com.hms.appointment.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PatientDTO {
 
     private Long id;
@@ -26,6 +29,7 @@ public class PatientDTO {
     private LocalDate dob;
     private String phone;
     private String address;
+    @JsonAlias({"aadharNo", "addharNo"})
     private String addharNo;
     private BloodGroup bloodGroup;
     private String allergies;

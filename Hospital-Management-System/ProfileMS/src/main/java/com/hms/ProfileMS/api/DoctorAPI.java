@@ -10,9 +10,11 @@ import com.hms.ProfileMS.services.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -33,16 +35,33 @@ public class DoctorAPI {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<DoctorDTO> getPatientById(@PathVariable Long id) throws HmException {
+    public ResponseEntity<DoctorDTO> getDoctorById(@PathVariable Long id) throws HmException {
         return new ResponseEntity<>(doctorService.getDoctorById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<DoctorDTO>> getAllDoctors() {
+        return new ResponseEntity<>(doctorService.getAllDoctors(), HttpStatus.OK);
+    }
+
+    @GetMapping("/department/{department}")
+    public ResponseEntity<List<DoctorDTO>> getDoctorsByDepartment(@PathVariable String department) {
+        return new ResponseEntity<>(doctorService.getDoctorsByDepartment(department), HttpStatus.OK);
+    }
+
+    @GetMapping("/specialization/{specialization}")
+    public ResponseEntity<List<DoctorDTO>> getDoctorsBySpecialization(@PathVariable String specialization) {
+        return new ResponseEntity<>(doctorService.getDoctorsBySpecialization(specialization), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deletePatient(@PathVariable Long id) throws HmException {
+    public ResponseEntity<String> deleteDoctor(@PathVariable Long id) throws HmException {
         doctorService.deleteDoctor(id);
         return new ResponseEntity<>("Doctor deleted successfully", HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     @PutMapping("/update")
     public ResponseEntity<DoctorDTO> updateDoctor(@RequestBody DoctorDTO doctorDTO)throws HmException{
         return new ResponseEntity<>(doctorService.updateDoctor(doctorDTO), HttpStatus.OK);

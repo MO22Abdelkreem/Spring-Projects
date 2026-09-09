@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import feign.FeignException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -19,12 +20,32 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorInfo> exceptionHandler(Exception exception) {
+        exception.printStackTrace();
         ErrorInfo errorInfo = new ErrorInfo(
-                "Some Error Occurred",
+                exception.getMessage() != null ? exception.getMessage() : "Some Error Occurred",
                 (long) HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorInfo> handleFeignException(FeignException exception) {
+        exception.printStackTrace();
+        HttpStatus status = HttpStatus.resolve(exception.status());
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        String errorMsg = exception.contentUTF8();
+        if (errorMsg == null || errorMsg.isBlank()) {
+            errorMsg = exception.getMessage();
+        }
+        ErrorInfo errorInfo = new ErrorInfo(
+                errorMsg,
+                (long) status.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorInfo, status);
     }
 
     @ExceptionHandler(HmException.class)

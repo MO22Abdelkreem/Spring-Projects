@@ -25,9 +25,9 @@ public class PatientServiceImpl implements PatientService{
     }
 
     @Override
-    public Patient getPatientById(Long id) throws HmException {
+    public PatientDTO getPatientById(Long id) throws HmException {
         return patientRepository.findById(id)
-                .orElseThrow(() -> new HmException("PATIENT_NOT_FOUND"));
+                .orElseThrow(() -> new HmException("PATIENT_NOT_FOUND")).toDTO();
     }
 
     @Override
@@ -47,5 +47,10 @@ public class PatientServiceImpl implements PatientService{
     @Override
     public Boolean patientExists(Long id) throws HmException {
         return patientRepository.existsById(id);
+    }
+
+    @Override
+    public java.util.List<PatientDTO> getAllPatients() {
+        return patientRepository.findAll().stream().map(Patient::toDTO).toList();
     }
 }
