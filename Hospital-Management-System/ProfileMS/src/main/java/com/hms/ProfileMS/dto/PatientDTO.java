@@ -31,6 +31,8 @@ public class PatientDTO {
     private BloodGroup bloodGroup;
     private String allergies;
     private String chronicDisease;
+    private String imageUrl;
+
 
     public Patient toEntity() {
         return new Patient(
@@ -43,7 +45,9 @@ public class PatientDTO {
                 this.addharNo,
                 this.bloodGroup,
                 this.allergies,
-                this.chronicDisease
+                this.chronicDisease,
+                this.imageUrl
+
         );
     }
 }

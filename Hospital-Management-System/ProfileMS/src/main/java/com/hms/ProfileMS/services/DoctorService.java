@@ -4,6 +4,8 @@ import com.hms.ProfileMS.dto.DoctorDTO;
 import com.hms.ProfileMS.entity.Doctor;
 import com.hms.ProfileMS.exception.HmException;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface DoctorService {
@@ -15,4 +17,6 @@ public interface DoctorService {
     List<DoctorDTO> getAllDoctors();
     List<DoctorDTO> getDoctorsByDepartment(String department);
     List<DoctorDTO> getDoctorsBySpecialization(String specialization);
+    DoctorDTO updateDoctorImage(Long doctorId, MultipartFile file);
 }
+

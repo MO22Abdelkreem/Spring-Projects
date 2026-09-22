@@ -8,6 +8,8 @@ spring:
     gateway:
       server:
         webflux:
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Vary, RETAIN_FIRST
           routes:
             - id: user-ms
               uri: lb://UserMS
@@ -29,6 +31,11 @@ spring:
                 - Path=/appointment/**
               filters:
                 - Token
+
+            - id: profile-uploads
+              uri: lb://ProfileMS
+              predicates:
+                - Path=/uploads/**
 eureka:
   client:
     service-url:

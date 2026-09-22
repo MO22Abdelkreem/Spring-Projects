@@ -35,7 +35,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/profile/doctor/add", "/profile/doctor/create",
-                                "/profile/patient/add", "/profile/patient/create").permitAll()
+                                "/profile/patient/add", "/profile/patient/create",
+                                "/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

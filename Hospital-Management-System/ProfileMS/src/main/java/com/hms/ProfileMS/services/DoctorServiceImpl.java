@@ -5,9 +5,37 @@ import com.hms.ProfileMS.entity.Doctor;
 import com.hms.ProfileMS.exception.HmException;
 import com.hms.ProfileMS.repository.DoctorRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
-public class DoctorServiceImpl implements DoctorService{
+public class DoctorServiceImpl implements DoctorService {
+
+    private final DoctorRepository doctorRepository;
+    private final FileStorageService fileStorageService;
+
+    public DoctorServiceImpl(DoctorRepository doctorRepository, FileStorageService fileStorageService) {
+        this.doctorRepository = doctorRepository;
+        this.fileStorageService = fileStorageService;
+    }
+
+    @Override
+    public DoctorDTO updateDoctorImage(Long doctorId, MultipartFile file) {
+        // فحص وجود الطبيب
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId));
+
+        // حفظ الصورة وأخذ المسار النسبي
+        String imageUrl = fileStorageService.saveFile(file);
+
+        // تحديث الحقل وحفظه في profiledb
+        doctor.setImageUrl(imageUrl);
+        Doctor updatedDoctor = doctorRepository.save(doctor);
+
+        return updatedDoctor.toDTO();
+    }
+
     @Override
     public DoctorDTO updateDoctor(DoctorDTO doctorDTO) throws HmException {
         doctorRepository.findById(doctorDTO.getId()).orElseThrow(()-> new HmException("DOCTOR_NOT_FOUND"));
@@ -17,12 +45,6 @@ public class DoctorServiceImpl implements DoctorService{
     @Override
     public Boolean doctorExists(Long id) throws HmException {
         return doctorRepository.existsById(id);
-    }
-
-    private final DoctorRepository doctorRepository;
-
-    public DoctorServiceImpl(DoctorRepository doctorRepository) {
-        this.doctorRepository = doctorRepository;
     }
 
     @Override

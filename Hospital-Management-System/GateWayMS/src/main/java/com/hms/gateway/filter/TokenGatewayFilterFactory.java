@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -35,7 +36,7 @@ public class TokenGatewayFilterFactory
                     .getURI()
                     .getPath();
 
-            if (isPublicEndpoint(path)) {
+            if (HttpMethod.OPTIONS.equals(exchange.getRequest().getMethod()) || isPublicEndpoint(path)) {
                 return chain.filter(exchange);
             }
             String authorizationHeader =

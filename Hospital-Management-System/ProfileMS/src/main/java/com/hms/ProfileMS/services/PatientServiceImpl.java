@@ -5,14 +5,17 @@ import com.hms.ProfileMS.entity.Patient;
 import com.hms.ProfileMS.exception.HmException;
 import com.hms.ProfileMS.repository.PatientRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PatientServiceImpl implements PatientService{
 
     private final PatientRepository patientRepository;
+    private final FileStorageService fileStorageService;
 
-    public PatientServiceImpl(PatientRepository patientRepository) {
+    public PatientServiceImpl(PatientRepository patientRepository, FileStorageService fileStorageService) {
         this.patientRepository = patientRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
@@ -52,5 +55,18 @@ public class PatientServiceImpl implements PatientService{
     @Override
     public java.util.List<PatientDTO> getAllPatients() {
         return patientRepository.findAll().stream().map(Patient::toDTO).toList();
+    }
+
+    @Override
+    public PatientDTO updatePatientImage(Long patientId, MultipartFile file) {
+
+        Patient patient = patientRepository.findById(patientId).
+                orElseThrow(()-> new RuntimeException("Patient not Found with id:" + patientId));
+        String imageUrl = fileStorageService.saveFile(file);
+
+        patient.setImageUrl(imageUrl);
+        Patient updatedPatient = patientRepository.save(patient);
+        return updatedPatient.toDTO();
+
     }
 }

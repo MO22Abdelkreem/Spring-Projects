@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin
 public class UserAPI {
 
     private final UserService userService;
@@ -40,6 +39,7 @@ public class UserAPI {
         userService.login(loginRequest.getEmail(), loginRequest.getPassword());
         CustomUserDetails userDetails = (CustomUserDetails) myUserDetailsService.loadUserByUsername(loginRequest.getEmail());
         loginRequest.setToken(jwtUtil.generateToken(userDetails));
+        loginRequest.setRole(userDetails.getRole());
         loginRequest.setPassword(null);
         return ResponseEntity.ok(loginRequest);
     }

@@ -32,6 +32,7 @@ public class DoctorDTO {
     private Integer totalExp;
     private String department;
     private String specialization;
+    private String imageUrl;
 
     public Doctor toEntity() {
         return new Doctor(
@@ -45,7 +46,8 @@ public class DoctorDTO {
                 this.bloodGroup,
                 this.totalExp,
                 this.department,
-                this.specialization
+                this.specialization,
+                this.imageUrl
         );
     }
 }

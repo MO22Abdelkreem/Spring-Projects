@@ -41,6 +41,8 @@ public class Patient {
     private BloodGroup bloodGroup;
     private String allergies;
     private String chronicDisease;
+    private String imageUrl;
+
 
     public PatientDTO toDTO() {
         return new PatientDTO(
@@ -53,7 +55,8 @@ public class Patient {
                 this.aadharNo,
                 this.bloodGroup,
                 this.allergies,
-                this.chronicDisease
+                this.chronicDisease,
+                this.imageUrl
         );
     }
 }

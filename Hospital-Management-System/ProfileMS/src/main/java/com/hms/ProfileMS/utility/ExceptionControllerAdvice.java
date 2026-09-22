@@ -16,6 +16,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorInfo> handleIllegalArgumentException(IllegalArgumentException exception) {
+        ErrorInfo errorInfo = new ErrorInfo(
+                exception.getMessage(),
+                (long) HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorInfo> exceptionHandler(Exception exception) {
         ErrorInfo errorInfo = new ErrorInfo(

@@ -1,19 +1,21 @@
 package com.hms.ProfileMS.api;
 
+import com.hms.ProfileMS.dto.DoctorDTO;
 import com.hms.ProfileMS.dto.PatientDTO;
 import com.hms.ProfileMS.exception.HmException;
 import com.hms.ProfileMS.services.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/profile/patient")
 @Validated
 public class PatientAPI {
@@ -56,5 +58,11 @@ public class PatientAPI {
     @GetMapping("/exists/{id}")
     public ResponseEntity<Boolean> patientExists(@PathVariable Long id)throws HmException{
         return new ResponseEntity<>(patientService.patientExists(id),HttpStatus.OK);
+    }
+    @PostMapping(value = "/{id}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PatientDTO> uploadPatientImage(@PathVariable Long id, @RequestParam("file") MultipartFile file)
+    {
+        PatientDTO updatedPatient = patientService.updatePatientImage(id, file);
+        return ResponseEntity.ok(updatedPatient);
     }
 }

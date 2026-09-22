@@ -44,6 +44,8 @@ public class Doctor {
     private String department;
     private String specialization;
 
+    private String imageUrl;
+
     public DoctorDTO toDTO() {
         return new DoctorDTO(
                 this.id,
@@ -56,7 +58,8 @@ public class Doctor {
                 this.bloodGroup,
                 this.totalExp,
                 this.department,
-                this.specialization
+                this.specialization,
+                this.imageUrl
         );
     }
 }
