@@ -18,5 +18,6 @@ public interface DoctorService {
     List<DoctorDTO> getDoctorsByDepartment(String department);
     List<DoctorDTO> getDoctorsBySpecialization(String specialization);
     DoctorDTO updateDoctorImage(Long doctorId, MultipartFile file);
+    Long getDoctorIdByEmail(String email) throws HmException;
 }
 

@@ -15,4 +15,5 @@ public interface PatientService {
     public Boolean patientExists(Long id) throws HmException;
     List<PatientDTO> getAllPatients();
     PatientDTO updatePatientImage(Long patientId, MultipartFile file);
+    List<PatientDTO> getPatientsByIds(List<Long> ids);
 }

@@ -6,6 +6,10 @@ import com.hms.appointment.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @FeignClient(name = "ProfileMS", url = "${profile.service.url:}", configuration = FeignClientConfig.class)
 public interface ProfileClient {
@@ -21,4 +25,10 @@ public interface ProfileClient {
 
     @GetMapping("/profile/doctor/get/{id}")
     DoctorDTO getDoctorById(@PathVariable("id") Long id);
+
+    @GetMapping("/profile/doctor/email/{email}")
+    Long getDoctorByEmail(@PathVariable("email") String email);
+
+    @PostMapping("/profile/patient/batch")
+    List<PatientDTO> getPatientsByIds(@RequestBody List<Long> patientIds);
 }

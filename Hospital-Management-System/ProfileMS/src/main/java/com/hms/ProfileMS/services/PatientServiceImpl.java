@@ -69,4 +69,14 @@ public class PatientServiceImpl implements PatientService{
         return updatedPatient.toDTO();
 
     }
+
+    @Override
+    public java.util.List<PatientDTO> getPatientsByIds(java.util.List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        java.util.List<Patient> patients = new java.util.ArrayList<>();
+        patientRepository.findAllById(ids).forEach(patients::add);
+        return patients.stream().map(Patient::toDTO).toList();
+    }
 }

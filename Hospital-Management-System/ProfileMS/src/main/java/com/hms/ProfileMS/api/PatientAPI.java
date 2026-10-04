@@ -65,4 +65,9 @@ public class PatientAPI {
         PatientDTO updatedPatient = patientService.updatePatientImage(id, file);
         return ResponseEntity.ok(updatedPatient);
     }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<PatientDTO>> getPatientsByIds(@RequestBody List<Long> ids) {
+        return new ResponseEntity<>(patientService.getPatientsByIds(ids), HttpStatus.OK);
+    }
 }

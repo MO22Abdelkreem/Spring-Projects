@@ -2,6 +2,7 @@ package com.hms.appointment.service;
 
 import com.hms.appointment.dto.AppointmentDTO;
 import com.hms.appointment.dto.AppointmentDetails;
+import com.hms.appointment.dto.PatientDTO;
 import com.hms.appointment.exception.HmException;
 
 import java.time.LocalDateTime;
@@ -16,4 +17,5 @@ public interface AppointmentService {
     AppointmentDetails getAppointmentDetailsWithName(Long appointmentId) throws HmException;
     List<AppointmentDTO> getAppointmentsByPatientId(Long patientId);
     List<AppointmentDTO> getAppointmentsByDoctorId(Long doctorId);
+    List<PatientDTO> getMyPatients() throws HmException;
 }

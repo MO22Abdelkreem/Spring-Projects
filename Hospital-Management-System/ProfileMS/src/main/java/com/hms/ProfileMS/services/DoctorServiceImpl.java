@@ -87,4 +87,11 @@ public class DoctorServiceImpl implements DoctorService {
     public java.util.List<DoctorDTO> getDoctorsBySpecialization(String specialization) {
         return doctorRepository.findBySpecializationIgnoreCase(specialization).stream().map(Doctor::toDTO).toList();
     }
+
+    @Override
+    public Long getDoctorIdByEmail(String email) throws HmException {
+        return doctorRepository.findByEmail(email)
+                .map(Doctor::getId)
+                .orElseThrow(() -> new HmException("DOCTOR_NOT_FOUND"));
+    }
 }

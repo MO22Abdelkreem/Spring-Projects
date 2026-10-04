@@ -1,9 +1,6 @@
 package com.hms.appointment.api;
 
-import com.hms.appointment.dto.AppointmentDTO;
-import com.hms.appointment.dto.AppointmentDetails;
-import com.hms.appointment.dto.RescheduleDTO;
-import com.hms.appointment.dto.Status;
+import com.hms.appointment.dto.*;
 import com.hms.appointment.exception.HmException;
 import com.hms.appointment.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,7 @@ public class AppointmentAPI {
 
 
 
-    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN', 'DOCTOR')")
     @PostMapping("/schedule")
     public ResponseEntity<Long> scheduleAppointment(@RequestBody AppointmentDTO appointmentDTO) throws HmException {
         return new ResponseEntity<>(appointmentService.scheduleAppointment(appointmentDTO), HttpStatus.CREATED);
@@ -74,5 +71,12 @@ public class AppointmentAPI {
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<List<AppointmentDTO>> getAppointmentsByDoctorId(@PathVariable Long doctorId) {
         return new ResponseEntity<>(appointmentService.getAppointmentsByDoctorId(doctorId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('DOCTOR')")
+    @GetMapping("/my-patients")
+    public ResponseEntity<List<PatientDTO>> getMyPatients() throws HmException {
+        List<PatientDTO> patients = appointmentService.getMyPatients();
+        return ResponseEntity.ok(patients);
     }
 }

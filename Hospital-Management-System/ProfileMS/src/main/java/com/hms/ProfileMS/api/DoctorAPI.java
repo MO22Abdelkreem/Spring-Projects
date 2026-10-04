@@ -78,4 +78,9 @@ public class DoctorAPI {
         DoctorDTO updatedDoctor = doctorService.updateDoctorImage(id, file);
         return ResponseEntity.ok(updatedDoctor);
     }
+
+    @GetMapping({"/email/{email}", "/by-email/{email}"})
+    public ResponseEntity<Long> getDoctorIdByEmail(@PathVariable String email) throws HmException {
+        return new ResponseEntity<>(doctorService.getDoctorIdByEmail(email), HttpStatus.OK);
+    }
 }

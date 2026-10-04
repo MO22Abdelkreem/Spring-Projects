@@ -6,37 +6,68 @@ import com.hms.appointment.entity.Appointment;
 import com.hms.appointment.exception.HmException;
 import com.hms.appointment.repository.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional
 public class AppointmentServiceImpl implements AppointmentService {
 
-    @Autowired
-    private AppointmentRepository appointmentRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final ProfileClient profileClient;
 
-    @Autowired
-    private ProfileClient profileClient;
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, ProfileClient profileClient) {
+        this.appointmentRepository = appointmentRepository;
+        this.profileClient = profileClient;
+    }
 
     @Override
-    public Long scheduleAppointment(AppointmentDTO appointmentDTO)throws HmException {
-        if(appointmentDTO.getAppointmentTime() == null || appointmentDTO.getAppointmentTime().isBefore(LocalDateTime.now())){
+    public Long scheduleAppointment(AppointmentDTO appointmentDTO) throws HmException {
+        if (appointmentDTO == null) {
+            throw new HmException("INVALID_APPOINTMENT");
+        }
+
+        if (appointmentDTO.getAppointmentTime() == null || appointmentDTO.getAppointmentTime().isBefore(LocalDateTime.now())) {
             throw new HmException("INVALID_APPOINTMENT_TIME");
         }
-        Boolean doctorExists = profileClient.doctorExists(appointmentDTO.getDoctorId());
-        if(doctorExists == null || !doctorExists){
-            throw new HmException("DOCTOR_NOT_FOUND");
-        }
-        Boolean patientExists = profileClient.patientExists(appointmentDTO.getPatientId());
-        if(patientExists == null || !patientExists){
+
+        if (appointmentDTO.getPatientId() == null) {
             throw new HmException("PATIENT_NOT_FOUND");
         }
-        if(appointmentRepository.existsByDoctorIdAndAppointmentTimeAndStatus(
-                appointmentDTO.getDoctorId(), appointmentDTO.getAppointmentTime(), Status.SCHEDULED)){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isDoctor = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_DOCTOR".equals(a.getAuthority()));
+
+        if (isDoctor) {
+            String currentDoctorEmail = authentication.getName();
+            Long currentDoctorId = profileClient.getDoctorByEmail(currentDoctorEmail);
+
+            if (appointmentDTO.getDoctorId() != null && !appointmentDTO.getDoctorId().equals(currentDoctorId)) {
+                throw new HmException("UNAUTHORIZED_DOCTOR_ACCESS");
+            }
+            appointmentDTO.setDoctorId(currentDoctorId);
+        } else {
+            if (appointmentDTO.getDoctorId() == null || !Boolean.TRUE.equals(profileClient.doctorExists(appointmentDTO.getDoctorId()))) {
+                throw new HmException("DOCTOR_NOT_FOUND");
+            }
+        }
+
+        if (!Boolean.TRUE.equals(profileClient.patientExists(appointmentDTO.getPatientId()))) {
+            throw new HmException("PATIENT_NOT_FOUND");
+        }
+
+        if (appointmentRepository.existsByDoctorIdAndAppointmentTimeAndStatus(
+                appointmentDTO.getDoctorId(), appointmentDTO.getAppointmentTime(), Status.SCHEDULED)) {
             throw new HmException("DOCTOR_UNAVAILABLE_SLOT");
         }
+
         appointmentDTO.setStatus(Status.SCHEDULED);
         return appointmentRepository.save(appointmentDTO.toEntity()).getId();
     }
@@ -94,6 +125,29 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public List<AppointmentDTO> getAppointmentsByDoctorId(Long doctorId) {
         return appointmentRepository.findByDoctorId(doctorId).stream().map(Appointment::toDTO).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PatientDTO> getMyPatients() throws HmException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new HmException("UNAUTHORIZED");
+        }
+        String doctorEmail = authentication.getName();
+
+        Long doctorId = profileClient.getDoctorByEmail(doctorEmail);
+        if (doctorId == null) {
+            throw new HmException("DOCTOR_NOT_FOUND");
+        }
+
+        List<Long> patientIds = appointmentRepository.findDistinctPatientIdsByDoctorId(doctorId);
+
+        if (patientIds == null || patientIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return profileClient.getPatientsByIds(patientIds);
     }
 
     @Override
