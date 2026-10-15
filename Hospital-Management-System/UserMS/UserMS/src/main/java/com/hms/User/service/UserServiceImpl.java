@@ -3,6 +3,7 @@ package com.hms.User.service;
 import com.hms.User.dto.RegisterRequestDTO;
 import com.hms.User.dto.UserDTO;
 import com.hms.User.dto.UserResponseDTO;
+import com.hms.User.dto.UserUpdateRequestDTO;
 import com.hms.User.entity.User;
 import com.hms.User.exception.HmException;
 import com.hms.User.repository.UserRepository;
@@ -10,6 +11,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -87,18 +90,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(Long id, RegisterRequestDTO registerRequestDTO) throws HmException {
+    public UserResponseDTO updateUser(Long id, UserUpdateRequestDTO updateRequestDTO) throws HmException {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new HmException(getMessage("user.not.found", id)));
-        
-        existingUser.setUsername(registerRequestDTO.getUsername());
-        existingUser.setEmail(registerRequestDTO.getEmail());
-        existingUser.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
-        existingUser.setRole(registerRequestDTO.getRole());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new HmException("UNAUTHORIZED");
+        }
+
+        String loggedInEmailOrUsername = authentication.getName();
+        Boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!isAdmin && !existingUser.getEmail().equalsIgnoreCase(loggedInEmailOrUsername))
+        {
+            throw new HmException("UNAUTHORIZED_ACCESS");
+        }
+        if (!existingUser.getEmail().equalsIgnoreCase(updateRequestDTO.getEmail())) {
+            Optional<User> emailExists = userRepository.findByEmail(updateRequestDTO.getEmail());
+            if (emailExists.isPresent()) {
+                throw new HmException(getMessage("user.email.exists"));
+            }
+            existingUser.setEmail(updateRequestDTO.getEmail());
+        }
+        existingUser.setUsername(updateRequestDTO.getUsername());
 
         User updatedUser = userRepository.save(existingUser);
         return updatedUser.toResponseDTO();
+
     }
+
 
     private String getMessage(String key, Object... args) {
         return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());

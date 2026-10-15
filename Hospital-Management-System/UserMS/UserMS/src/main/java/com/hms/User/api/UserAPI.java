@@ -3,6 +3,7 @@ package com.hms.User.api;
 import com.hms.User.dto.LoginDTO;
 import com.hms.User.dto.RegisterRequestDTO;
 import com.hms.User.dto.UserResponseDTO;
+import com.hms.User.dto.UserUpdateRequestDTO;
 import com.hms.User.exception.HmException;
 import com.hms.User.jwt.CustomUserDetails;
 import com.hms.User.jwt.JwtUtil;
@@ -50,9 +51,12 @@ public class UserAPI {
         return ResponseEntity.ok(userDTO);
     }
 
-    @PutMapping("update/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody RegisterRequestDTO registerRequestDTO) throws HmException {
-        UserResponseDTO updatedUser = userService.updateUser(id, registerRequestDTO);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UserUpdateRequestDTO updateRequestDTO) throws HmException {
+
+        UserResponseDTO updatedUser = userService.updateUser(id, updateRequestDTO);
         return ResponseEntity.ok(updatedUser);
     }
 }
