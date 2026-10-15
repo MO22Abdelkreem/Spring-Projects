@@ -79,4 +79,24 @@ public class AppointmentAPI {
         List<PatientDTO> patients = appointmentService.getMyPatients();
         return ResponseEntity.ok(patients);
     }
+
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
+    @GetMapping("/patient/{patientId}/upcoming")
+    public ResponseEntity<List<AppointmentDTO>> getUpcomingAppointmentsPatient(
+            @PathVariable Long patientId,
+            @RequestParam(defaultValue = "ALL") AppointmentTimeframe timeframe) {
+        List<AppointmentDTO> appointments = appointmentService.getUpcomingAppointmentsPatient(patientId, timeframe);
+        return ResponseEntity.ok(appointments);
+    }
+
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+    @GetMapping("/doctor/{doctorId}/upcoming")
+    public ResponseEntity<List<AppointmentDTO>> getUpcomingAppointmentsDoctor(
+            @PathVariable Long doctorId,
+            @RequestParam(defaultValue = "ALL") AppointmentTimeframe timeframe) {
+        List<AppointmentDTO> appointments = appointmentService.getUpcomingAppointmentsDoctor(doctorId, timeframe);
+        return ResponseEntity.ok(appointments);
+    }
+
+
 }

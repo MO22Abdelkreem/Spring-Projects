@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -148,6 +150,57 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         return profileClient.getPatientsByIds(patientIds);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AppointmentDTO> getUpcomingAppointmentsPatient(Long patientId, AppointmentTimeframe timeframe) {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Appointment> appointments;
+
+        if (timeframe == AppointmentTimeframe.TODAY) {
+            LocalDateTime endOfToday = now.toLocalDate().atTime(LocalTime.MAX);
+            appointments = appointmentRepository
+                    .findByPatientIdAndStatusAndAppointmentTimeBetweenOrderByAppointmentTimeAsc
+                            (patientId, Status.SCHEDULED, now, endOfToday);
+        } else if (timeframe == AppointmentTimeframe.WEEK) {
+            LocalDateTime endOfWeek = now.toLocalDate().plusDays(7).atTime(LocalTime.MAX);
+            appointments = appointmentRepository.findByPatientIdAndStatusAndAppointmentTimeBetweenOrderByAppointmentTimeAsc
+                    (patientId, Status.SCHEDULED, now, endOfWeek);
+        } else {
+            appointments = appointmentRepository
+                    .findByPatientIdAndStatusAndAppointmentTimeGreaterThanEqualOrderByAppointmentTimeAsc
+                            (patientId, Status.SCHEDULED, now);
+
+        }
+        return appointments.stream().map(Appointment::toDTO).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AppointmentDTO> getUpcomingAppointmentsDoctor(Long doctorId, AppointmentTimeframe timeframe) {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Appointment> appointments;
+
+        if (timeframe == AppointmentTimeframe.TODAY) {
+            LocalDateTime endOfToday = now.toLocalDate().atTime(LocalTime.MAX);
+            appointments = appointmentRepository
+                    .findByDoctorIdAndStatusAndAppointmentTimeBetweenOrderByAppointmentTimeAsc(
+                            doctorId, Status.SCHEDULED, now, endOfToday);
+        } else if (timeframe == AppointmentTimeframe.WEEK) {
+            LocalDateTime endOfWeek = now.toLocalDate().plusDays(7).atTime(LocalTime.MAX);
+            appointments = appointmentRepository
+                    .findByDoctorIdAndStatusAndAppointmentTimeBetweenOrderByAppointmentTimeAsc(
+                            doctorId, Status.SCHEDULED, now, endOfWeek);
+        } else {
+            appointments = appointmentRepository
+                    .findByDoctorIdAndStatusAndAppointmentTimeGreaterThanEqualOrderByAppointmentTimeAsc(
+                            doctorId, Status.SCHEDULED, now);
+        }
+
+        return appointments.stream().map(Appointment::toDTO).toList();
     }
 
     @Override

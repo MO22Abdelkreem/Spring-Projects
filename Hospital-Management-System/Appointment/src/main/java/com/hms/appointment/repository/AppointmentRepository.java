@@ -18,5 +18,15 @@ public interface AppointmentRepository extends CrudRepository<Appointment, Long>
     @Query("SELECT DISTINCT a.patientId FROM Appointment a WHERE a.doctorId = :doctorId")
     List<Long> findDistinctPatientIdsByDoctorId(@Param("doctorId") Long doctorId);
 
+    // Patient Upcoming
+    List<Appointment> findByPatientIdAndStatusAndAppointmentTimeGreaterThanEqualOrderByAppointmentTimeAsc(
+            Long patientId, Status status, LocalDateTime from);
+    List<Appointment> findByPatientIdAndStatusAndAppointmentTimeBetweenOrderByAppointmentTimeAsc(
+            Long patientId, Status status, LocalDateTime from, LocalDateTime to);
 
+    // Doctor Upcoming
+    List<Appointment> findByDoctorIdAndStatusAndAppointmentTimeGreaterThanEqualOrderByAppointmentTimeAsc(
+            Long doctorId, Status status, LocalDateTime from);
+    List<Appointment> findByDoctorIdAndStatusAndAppointmentTimeBetweenOrderByAppointmentTimeAsc(
+            Long doctorId, Status status, LocalDateTime from, LocalDateTime to);
 }
